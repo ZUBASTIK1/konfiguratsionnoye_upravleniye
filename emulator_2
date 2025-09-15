@@ -1,0 +1,141 @@
+import tkinter as tk
+import getpass, socket, shlex
+import argparse, xml.etree.ElementTree as ET
+import csv, datetime
+from pathlib import Path
+
+# --- Получаем имя пользователя и хост ---
+user = getpass.getuser()
+host = socket.gethostname()
+prompt = f"{user}@{host}$ "
+
+# --- Чтение параметров из командной строки ---
+parser = argparse.ArgumentParser()
+parser.add_argument("--vfs")
+parser.add_argument("--log")
+parser.add_argument("--script")
+parser.add_argument("--config")
+cli = parser.parse_args()
+
+# --- Чтение конфигурационного XML-файла ---
+cfg = {}
+if cli.config:
+    try:
+        tree = ET.parse(cli.config)
+        root = tree.getroot()
+        cfg = {
+            "vfs": root.findtext("vfs"),
+            "log": root.findtext("log"),
+            "script": root.findtext("script")
+        }
+    except Exception as e:
+        print(f"[config] Ошибка чтения XML: {e}")
+
+# --- Приоритет: CLI > XML ---
+VFS_PATH = cli.vfs or cfg.get("vfs")
+LOG_PATH = cli.log or cfg.get("log")
+SCRIPT_PATH = cli.script or cfg.get("script")
+
+# --- Логирование команд в CSV ---
+def log_event(cmd, args, status):
+    if not LOG_PATH:
+        return
+    try:
+        file_exists = Path(LOG_PATH).exists()
+        with open(LOG_PATH, "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f, delimiter=";")
+            if not file_exists:
+                writer.writerow(["timestamp", "user", "command", "args", "status"])
+            writer.writerow([
+                datetime.datetime.now().isoformat(timespec="seconds"),
+                user,
+                cmd,
+                " ".join(args),
+                status
+            ])
+    except Exception as e:
+        print(f"[log] Ошибка записи: {e}")
+
+# --- GUI ---
+win = tk.Tk()
+win.title(f"Эмулятор — [{user}@{host}]")
+win.geometry("700x400")
+
+term = tk.Text(win, bg="black", fg="white", insertbackground="white")
+term.pack(expand=True, fill="both")
+term.insert("end", f"Эмулятор запущен. Введите команды: ls, cd, exit\nСессия: {user}@{host}\n\n")
+term.insert("end", f"Параметры запуска:\nVFS: {VFS_PATH}\nLog: {LOG_PATH}\nScript: {SCRIPT_PATH}\n\n")
+term.insert("end", prompt)
+term.focus()
+
+# --- Выполнение команд ---
+def execute(cmd, args):
+    if cmd == "exit":
+        log_event(cmd, args, "exit")
+        win.destroy()
+        return
+    elif cmd == "ls":
+        output = f"command: ls\nargs: {args}"
+        status = "ok"
+    elif cmd == "cd":
+        output = f"command: cd\nargs: {args}\nnote: директория не меняется (заглушка)"
+        status = "ok"
+    else:
+        output = f"{cmd}: command not found"
+        status = "error"
+    term.insert("end", f"\n{output}")
+    log_event(cmd, args, status)
+    term.insert("end", f"\n{prompt}")
+
+# --- Обработка ввода пользователя ---
+def on_enter(event):
+    index = term.index("insert linestart")
+    line = term.get(index, index + " lineend").strip()
+    if not line or line == prompt.strip(): # защита от пустого вввода
+        return
+    cmdline = line[len(prompt):] #удаление promt
+    try:
+        parts = shlex.split(cmdline)
+    except Exception as e: #незакрытая кавычка
+        term.insert("end", f"\nparse error: {e}\n{prompt}")
+        return
+    if not parts:
+        term.insert("end", f"\n{prompt}")
+        return
+    cmd, args = parts[0], parts[1:]
+    execute(cmd, args)
+    return "break"
+
+term.bind("<Return>", on_enter)
+
+# --- Выполнение стартового скрипта ---
+def run_script(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception as e:
+        term.insert("end", f"\n[script] Ошибка чтения: {e}\n{prompt}")
+        return
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        term.insert("end", f"\n{prompt}{line}") #имитация пользователя
+        try:
+            parts = shlex.split(line)
+        except Exception as e: #незакрытая кавычка
+            term.insert("end", f"\n[script] parse error: {e}")
+            continue
+        if not parts:
+            continue
+        cmd, args = parts[0], parts[1:]
+        if cmd == "exit":
+            log_event(cmd, args, "exit")
+            win.after(0, win.destroy)
+            return
+        execute(cmd, args)
+
+if SCRIPT_PATH:
+    run_script(SCRIPT_PATH) #запуск скрипта
+
+win.mainloop()
