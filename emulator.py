@@ -39,6 +39,7 @@ def on_enter(event):
 
     if cmd == "exit":
         win.destroy()
+        return
     elif cmd == "ls":
         term.insert("end", f"\ncommand: ls\nargs: {rest}")
     elif cmd == "cd":
@@ -52,3 +53,4 @@ def on_enter(event):
 term.bind("<Return>", on_enter)
 
 win.mainloop()
+
