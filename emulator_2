@@ -61,12 +61,27 @@ win = tk.Tk()
 win.title(f"Эмулятор — [{user}@{host}]")
 win.geometry("700x400")
 
-term = tk.Text(win, bg="black", fg="white", insertbackground="white")
+# Поле вывода (только для чтения)
+term = tk.Text(win, bg="black", fg="white", insertbackground="white", state="disabled")
 term.pack(expand=True, fill="both")
+
+# Поле ввода команд
+entry = tk.Entry(win, bg="gray15", fg="white", insertbackground="white")
+entry.pack(fill="x", ipady=0)
+entry.focus()
+
+# Начальный вывод
+term.configure(state="normal")
 term.insert("end", f"Эмулятор запущен. Введите команды: ls, cd, exit\nСессия: {user}@{host}\n\n")
-term.insert("end", f"Параметры запуска:\nVFS: {VFS_PATH}\nLog: {LOG_PATH}\nScript: {SCRIPT_PATH}\n\n")
+term.insert("end",
+    f"Параметры запуска:\n"
+    f"VFS: {VFS_PATH}\n"
+    f"Log: {LOG_PATH}\n"
+    f"Script: {SCRIPT_PATH}\n"
+    f"Config: {cli.config}\n\n"
+)
 term.insert("end", prompt)
-term.focus()
+term.configure(state="disabled")
 
 # --- Выполнение команд ---
 def execute(cmd, args):
@@ -83,30 +98,40 @@ def execute(cmd, args):
     else:
         output = f"{cmd}: command not found"
         status = "error"
-    term.insert("end", f"\n{output}")
+
+    term.configure(state="normal")
+    term.insert("end", f"\n{output}\n{prompt}")
+    term.configure(state="disabled")
+    term.see("end")
+
     log_event(cmd, args, status)
-    term.insert("end", f"\n{prompt}")
 
 # --- Обработка ввода пользователя ---
 def on_enter(event):
-    index = term.index("insert linestart")
-    line = term.get(index, index + " lineend").strip()
-    if not line or line == prompt.strip(): # защита от пустого вввода
+    cmdline = entry.get().strip()
+    entry.delete(0, "end")
+
+    if not cmdline:
         return
-    cmdline = line[len(prompt):] #удаление promt
+
     try:
         parts = shlex.split(cmdline)
-    except Exception as e: #незакрытая кавычка
+    except Exception as e:  # незакрытая кавычка
+        term.configure(state="normal")
         term.insert("end", f"\nparse error: {e}\n{prompt}")
+        term.configure(state="disabled")
+        term.see("end")
         return
-    if not parts:
-        term.insert("end", f"\n{prompt}")
-        return
-    cmd, args = parts[0], parts[1:]
-    execute(cmd, args)
-    return "break"
 
-term.bind("<Return>", on_enter)
+    cmd, args = parts[0], parts[1:]
+
+    term.configure(state="normal")
+    term.insert("end", f"\n{prompt}{cmdline}")
+    term.configure(state="disabled")
+
+    execute(cmd, args)
+
+entry.bind("<Return>", on_enter)
 
 # --- Выполнение стартового скрипта ---
 def run_script(path):
@@ -114,17 +139,23 @@ def run_script(path):
         with open(path, "r", encoding="utf-8") as f:
             lines = f.readlines()
     except Exception as e:
+        term.configure(state="normal")
         term.insert("end", f"\n[script] Ошибка чтения: {e}\n{prompt}")
+        term.configure(state="disabled")
         return
     for raw in lines:
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
-        term.insert("end", f"\n{prompt}{line}") #имитация пользователя
+        term.configure(state="normal")
+        term.insert("end", f"\n{prompt}{line}")  # имитация пользователя
+        term.configure(state="disabled")
         try:
             parts = shlex.split(line)
-        except Exception as e: #незакрытая кавычка
+        except Exception as e:  # незакрытая кавычка
+            term.configure(state="normal")
             term.insert("end", f"\n[script] parse error: {e}")
+            term.configure(state="disabled")
             continue
         if not parts:
             continue
@@ -136,6 +167,6 @@ def run_script(path):
         execute(cmd, args)
 
 if SCRIPT_PATH:
-    run_script(SCRIPT_PATH) #запуск скрипта
+    run_script(SCRIPT_PATH)  # запуск скрипта
 
 win.mainloop()
