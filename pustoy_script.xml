@@ -1,0 +1,5 @@
+<config>
+  <vfs>C:/vfs</vfs>
+  <log>empty.csv</log>
+  <script>pustoy_script.txt</script>
+</config>
