@@ -1,0 +1,5 @@
+<config>
+  <vfs>D:/test_vfs</vfs>
+  <log>session1.csv</log>
+  <script>proverka_logirovania.txt</script>
+</config>
