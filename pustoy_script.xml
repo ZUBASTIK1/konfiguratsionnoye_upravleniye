@@ -1,7 +1,0 @@
-<config>
-  <vfs>C:/vfs</vfs>
-  <log>empty.csv</log>
-  <script>pustoy_script.txt</script>
-</config>
-<!-- проверка работы с пустым скриптом, он 
-содержит пустые комментарии и пустые строки-->
