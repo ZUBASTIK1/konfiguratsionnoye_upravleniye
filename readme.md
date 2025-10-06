@@ -81,3 +81,16 @@ run_progon.bat — общий прогон всех тестов подряд.
 
 ## 4. Примеры использования
 
+<img width="621" height="703" alt="image" src="https://github.com/user-attachments/assets/11583a48-e325-4eca-95c2-b5a21cd8f387" />
+
+<img width="505" height="341" alt="image" src="https://github.com/user-attachments/assets/06e5014c-a7fb-4edc-9556-d403d6db1566" />
+
+<img width="758" height="349" alt="image" src="https://github.com/user-attachments/assets/8c2ff8d9-dd1c-4592-9533-253e1d20d0de" />
+
+<img width="539" height="339" alt="image" src="https://github.com/user-attachments/assets/cfcd7c7e-3ac2-45d6-bc2a-dd5f53baf143" />
+
+<img width="667" height="486" alt="image" src="https://github.com/user-attachments/assets/3c87ef00-f98b-4d81-a6ae-0b4896cb2401" />
+
+
+
+
