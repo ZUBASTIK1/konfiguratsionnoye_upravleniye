@@ -1,0 +1,7 @@
+<config>
+  <vfs>C:/vfs</vfs>
+  <log>log.csv</log>
+  <script>config_baza.txt</script>
+</config>
+<!-- Это базовый сценарий работы эмулятора,
+     обычные команды-->
