@@ -97,4 +97,22 @@ uniq docs
 exit
 ```
 
+
 ## 4. Примеры использования
+
+<img width="742" height="1174" alt="image" src="https://github.com/user-attachments/assets/86b34ac3-081e-49d2-90d3-3661a8075b0d" />
+
+<img width="472" height="227" alt="image" src="https://github.com/user-attachments/assets/9de64cfa-214a-4067-b131-91fed72a93ac" />
+
+<img width="639" height="493" alt="image" src="https://github.com/user-attachments/assets/7cffba31-5ccb-49bf-abaa-85fb31bbdbc9" />
+
+
+
+
+
+
+
+
+
+
+
