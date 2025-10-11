@@ -1,4 +1,4 @@
-# Shell Emulator (Этап 5)
+# Этап 5
 
 ## 1. Общее описание
 Проект представляет собой учебный эмулятор командной оболочки с графическим интерфейсом на Python (Tkinter).  
@@ -115,4 +115,15 @@ echo "Тест завершён"
 pytest -v
 ```
 
+
 ## 4. Примеры использования
+
+<img width="797" height="701" alt="image" src="https://github.com/user-attachments/assets/e1e0edcf-0151-473a-bf8e-f2be1a81715f" />
+
+<img width="759" height="1063" alt="image" src="https://github.com/user-attachments/assets/9cadf44e-93d4-4b0f-ab33-abda53532371" />
+
+<img width="454" height="76" alt="image" src="https://github.com/user-attachments/assets/0b710a03-5c4c-4267-ac24-f78494d03d11" />
+
+
+
+
