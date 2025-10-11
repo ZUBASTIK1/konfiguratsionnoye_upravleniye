@@ -1,9 +1,0 @@
-<vfs>
-  <dir name="uroven1">
-    <dir name="uroven2">
-      <dir name="uroven3">
-        <file name="glubina.txt" encoding="none">Очень глубоко в структуре</file>
-      </dir>
-    </dir>
-  </dir>
-</vfs>
