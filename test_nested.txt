@@ -1,6 +1,0 @@
-ls
-cd uroven1
-cd uroven2
-cd uroven3
-ls
-exit
