@@ -1,0 +1,37 @@
+# --- Проверка базовых команд ---
+ls
+echo "Hello from emulator"
+cd /
+
+# --- Проверка cat ---
+cat readme.txt
+cat image.bin
+cat nosuchfile        # ошибка: файла нет
+cat docs              # ошибка: каталог
+
+# --- Проверка uniq ---
+uniq                  # ошибка: нет аргумента
+uniq data.txt
+uniq -c data.txt
+uniq image.bin        # ошибка: бинарный файл
+uniq nosuchfile       # ошибка: файла нет
+
+# --- Проверка cd ---
+cd docs
+ls
+cd ..
+cd nosuchdir          # ошибка: нет директории
+cd readme.txt         # ошибка: не директория
+
+# --- Проверка chmod ---
+chmod                 # ошибка: нет аргументов
+chmod abc readme.txt  # ошибка: неверный режим
+chmod 644 nosuchfile  # ошибка: файла нет
+ls
+chmod 600 readme.txt
+ls
+chmod 700 docs
+ls
+
+# --- Проверка echo ---
+echo "Тест завершён"

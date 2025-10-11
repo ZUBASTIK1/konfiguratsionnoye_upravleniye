@@ -1,0 +1,16 @@
+<vfs>
+  <dir name="docs">
+    <file name="readme.txt">Это тестовый файл для команды cat</file>
+    <file name="duplicates.txt">строка1
+строка1
+строка2
+строка2
+строка3
+строка2
+строка1
+строка1
+</file>
+  </dir>
+  <file name="file.txt">Обычный файл в корне</file>
+  <file name="binfile.bin" encoding="base64">SGVsbG8gV29ybGQ=</file>
+</vfs>
